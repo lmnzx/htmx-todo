@@ -18,49 +18,42 @@
     <div class="container">
 
       <br>
-        <h1>Todo <span>(3/4)</span></h1>
+      <h1>Todo <span>({{count['done']}}/{{count['total']}})</span></h1>
 
-        <form method="post"  >
+        <form action="/add" method="post"  >
           <input type="text" name="title" placeholder="New task" value="" autocomplete="off">
           <button type="submit" value="Add" class="button-primary" role="button">Add</button>
         </form>
 
-        <form method="post">
+        <!--<form action="/update" method="post">-->
             <ul>
-
+                {% for todo in todos %}
                 <li>
-                    <input type="checkbox" id="task432432"
-                           name="task"
-                           value="432432"
+                    <input type="checkbox" id="todo{{todo['id']}}"
+                           name="todo"
+                           value="{{todo['id']}}"
+                           {% if todo['done']%}
+                           checked
+                           {% endif %}
+                           onClick='handleClick(this)'
                     >
-                    <label for="task432432">Call the secret services</label>
-                    <a>X</a>
+                    <label for="todo{{todo['id']}}">{{todo['title']}}</label>
+                    <a href="/delete/{{todo['id']}}">X</a>
                 </li>
-
-                <li>
-                    <input type="checkbox" id="task1"
-                          name="task"
-                          value="1"
-                          checked
-                    >
-                    <label for="task1">Save orphans</label>
-                    <a>X</a>
-                </li>
-
-              <li>
-                  <input type="checkbox" id="task43"
-                        name="task"
-                        value="43"
-                  >
-                  <label for="task43">Leg day</label>
-                  <a>X</a>
-              </li>
-
+                {% endfor %}
             </ul>
-
+            <!---
+            {% if todos %}
             <button type="submit" class="button-primary">Update</button>
-
-        </form>
+            {% endif %}
+            </form>-->
     </div>
+    <script>
+        function handleClick(value) {
+            fetch(`/update/${value.value}`).catch(function(err) {
+                console.log(`Fetch error: ${err}`)
+            });
+        } 
+    </script>
 </body>
 </html>
