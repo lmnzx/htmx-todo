@@ -5,6 +5,8 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
 
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+
     <style>
       li {
         list-style-type: none !important;
@@ -15,45 +17,35 @@
       }
     </style>
 </head>	
+<body>
     <div class="container">
 
       <br>
       <h1>Todo <span>({{count['done']}}/{{count['total']}})</span></h1>
 
-        <form action="/add" method="post"  >
-          <input type="text" name="title" placeholder="New task" value="" autocomplete="off">
-          <button type="submit" value="Add" class="button-primary" role="button">Add</button>
+        <form action="/add" method="post" hx-boost="true">
+            <input type="text" name="title" placeholder="New task" value="" autocomplete="off">
+            <button type="submit" value="Add" class="button-primary" role="button">Add</button>
         </form>
 
-        <!--<form action="/update" method="post">-->
-            <ul>
-                {% for todo in todos %}
-                <li>
-                    <input type="checkbox" id="todo{{todo['id']}}"
-                           name="todo"
-                           value="{{todo['id']}}"
-                           {% if todo['done']%}
-                           checked
-                           {% endif %}
-                           onClick='handleClick(this)'
-                    >
+        <ul>
+            {% for todo in todos %}
+            <li>
+                <input type="checkbox" id="todo{{todo['id']}}"
+                       name="todo"
+                       value="{{todo['id']}}"
+                       {% if todo['done']%}
+                       checked
+                       {% endif %}
+                       hx-put="/update/{{todo['id']}}"
+                       hx-trigger="click"
+                       hx-target="body"
+                >
                     <label for="todo{{todo['id']}}">{{todo['title']}}</label>
-                    <a href="/delete/{{todo['id']}}">X</a>
-                </li>
-                {% endfor %}
-            </ul>
-            <!---
-            {% if todos %}
-            <button type="submit" class="button-primary">Update</button>
-            {% endif %}
-            </form>-->
+                    <a hx-delete="/delete/{{todo['id']}}" hx-target="body">X</a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-    <script>
-        function handleClick(value) {
-            fetch(`/update/${value.value}`).catch(function(err) {
-                console.log(`Fetch error: ${err}`)
-            });
-        } 
-    </script>
 </body>
 </html>

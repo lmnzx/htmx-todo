@@ -36,17 +36,16 @@ async def add(title: Annotated[str, Form()]):
     if title:
         c.execute('INSERT INTO todos (title, done) VALUES (?, 0)', (title, ))
         conn.commit()
-        print(f'new todo is added id-> {c.lastrowid}')
 
     return RedirectResponse(url='/', status_code=status.HTTP_303_SEE_OTHER)
 
-@app.get('/delete/{id}')
+@app.delete('/delete/{id}')
 async def delete(id):
     c.execute('DELETE FROM todos WHERE id=?', (id,))
     conn.commit()
     return RedirectResponse(url='/', status_code=status.HTTP_303_SEE_OTHER)
 
-@app.get('/update/{id}')
+@app.put('/update/{id}')
 async def update(id):
     todo = c.execute('SELECT done FROM todos WHERE id=?', (id,)).fetchone()[0]
     if todo is 0:
